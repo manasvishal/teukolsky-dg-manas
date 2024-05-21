@@ -1,0 +1,43 @@
+# Settings to be used by the InitiatorCode.m for solving black hole perturbation
+# equations. This input file when read with ReadYaml.m will return a structure
+# of data variables
+
+
+
+# Initial Conditions
+IC_type: zero-momentum-gaussian
+sigma: 4
+mu: 40
+
+# background field
+spin_field: -2
+
+# Primary BH params
+primary_mass: 1
+primary_spin: 0
+ell_mode_max: 2
+m_mode: 1
+first_order_reduction_type: 2
+
+# Secondary BH params
+secondary_spin: 0
+rp: 16     # radius if a circular orbit
+mass_particle: 0.0
+
+# DG Grid params
+N:  19
+K: 200
+xL: -400
+xR: 400
+locR: 100
+symmetric_layers: 0  # 1 for symmetric layers around R; 0 for not symmetric
+digits_VPA: 1
+s: 400
+P: 4  # Polynomial degree for hyperboloidal layers
+
+
+# Simulation params
+DT: 2 # Snapshot time interval
+CFL: 0.8
+
+FinalTime: 1000
