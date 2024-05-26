@@ -35,16 +35,19 @@ Phi=dg_globals.IC_struct.phi_in;
 
 %%% output structure with multi-dimensional arrays
 %%%  first is t_step,second and third is the solution N,K
-Nrecord=ceil(dg_globals.FinalTime/dg_globals.DT);
+Nrecord=ceil(dg_globals.FinalTime/dg_globals.DT)+1;
 output.psi_arr=zeros(Nrecord,Np,K);
 output.pi_arr=zeros(Nrecord,Np,K);
 output.phi_arr=zeros(Nrecord,Np,K);
 
-output.tarr=zeros(1,Nrecord);
+output.time_arr=zeros(1,Nrecord);
 
-
+output.psi_arr(1,:,:)=Psi;
+output.pi_arr(1,:,:)=Pi;
+output.phi_arr(1,:,:)=Phi;
+output.time_arr(1,1)=time;
 tic % used to estimte remaining simulation time
-counter_snap=1;
+counter_snap=2;
 for tstep=1:Nsteps
    for INTRK = 1:5
       timelocal = time + rk4c(INTRK)*dg_globals.dt;
@@ -65,7 +68,6 @@ for tstep=1:Nsteps
    end 
    % Increment time
    time = tstep*dg_globals.dt;
-   abs(next_snapshot - time);
    
   
    % if mod(time,dg_globals.DT)<=dg_globals.dt/2 && tstep~=1
@@ -74,7 +76,7 @@ for tstep=1:Nsteps
        output.pi_arr(counter_snap,:,:)=Pi(:,:);
        output.phi_arr(counter_snap,:,:)=Phi(:,:);
   
-       output.tarr(1,counter_snap)=time;
+       output.time_arr(1,counter_snap)=time;
        next_snapshot = next_snapshot + dg_globals.DT;
        counter_snap=counter_snap+1;
    end

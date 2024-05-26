@@ -1,4 +1,4 @@
-function [rhsPsi,rhsPi, rhsPhi] = SchwarzschildRHS(Psi,Pi,Phi,dg_globals,time)
+function [rhsPsi,rhsPi, rhsPhi] = SchwarzschildRHS_old(Psi,Pi,Phi,dg_globals,time)
 
 
 
@@ -57,11 +57,11 @@ elseif(dg_globals.first_order_reduction_type==2)
     fluxPi=  dg_globals.matIAB{1,1}.*Pi...
             +dg_globals.matIAB{1,2}.*Phi;
     % fluxPhi= Pi;
-    % fluxPhi= dg_globals.matIAB{2,1}.*Pi...
-    %         +dg_globals.matIAB{2,2}.*Phi;
-    % 
-    % fluxPi_old = -1./(1+capH).*( - Phi - capH.*(Pi) ) ;
-    % fluxPhi_old =-1./(1+capH).*( -Pi - capH.*Phi);
+    fluxPhi= dg_globals.matIAB{2,1}.*Pi...
+            +dg_globals.matIAB{2,2}.*Phi;
+    
+    fluxPi_old = -1./(1+capH).*( - Phi - capH.*(Pi) ) ;
+    fluxPhi_old =-1./(1+capH).*( -Pi - capH.*Phi);
 else
     disp("ERROR! system type not found")
 end
@@ -70,13 +70,11 @@ fluxPiM = fluxPi(vmapM);
 fluxPiP = fluxPi(vmapP);
 
 
-fluxPhiM = Pi(vmapM);
-fluxPhiP = Pi(vmapP);
+fluxPhiM = fluxPhi(vmapM);
+fluxPhiP = fluxPhi(vmapP);
 
-fluxPhiP(1,1) = PiL;
-
-% fluxPiP(end,end) = fluxPiM(end,end); 
-% fluxPhiP(end,end) = fluxPhiM(end,end); 
+fluxPiP(end,end) = fluxPiM(end,end); 
+fluxPhiP(end,end) = fluxPhiM(end,end); 
 
 %% central numerical flux
 fluxPitrue =(fluxPiP  + fluxPiM)/2;

@@ -18,20 +18,6 @@ N=dg_globals.N; K=dg_globals.K;
 
 StartUp1D;
 
-dg_globals.rho=x;
-
-digits_VPA= 32;
-
-
-
-symmetric_layers=0;
-
-[idx1,idx2]=find_value_arr(x,dg_globals.locR);
-dg_globals.locR=x(idx1,idx2);
-
-
-dg_globals=HyperboloidalLayers(dg_globals,symmetric_layers,digits_VPA);
-
 dg_globals.x=x;           dg_globals.Np=Np;        dg_globals.Nfp=Nfp; 
 dg_globals.Nfaces=Nfaces; dg_globals.K=K;          dg_globals.vmapM=vmapM; 
 dg_globals.vmapP=vmapP;   dg_globals.nx=nx;        dg_globals.rx=rx;
@@ -39,6 +25,16 @@ dg_globals.Dr=Dr;         dg_globals.LIFT=LIFT;    dg_globals.Fscale=Fscale;
 dg_globals.rk4a=rk4a;     dg_globals.rk4b=rk4b;    dg_globals.rk4c=rk4c;
 dg_globals.M=dg_globals.primary_mass;
 dg_globals.a=dg_globals.primary_spin;
+
+
+
+dg_globals.rho=x;
+digits_VPA= 32;
+symmetric_layers=0;
+[idx1,idx2]=find_value_arr(x,dg_globals.locR);
+dg_globals.locR=x(idx1,idx2);
+dg_globals=HyperboloidalLayers(dg_globals,symmetric_layers,digits_VPA);
+
 
 [dg_globals.r_sch,dg_globals.r_schm2m] = RstarToR(dg_globals.rstarCoord_double,dg_globals.M);
 
@@ -60,8 +56,12 @@ dg_globals.potential_eff_general_s(Np,K)=double(dg_globals.pot_inf(Np,K));
 
 dg_globals.potential=dg_globals.potential_eff_general_s;
 
+
+
+
 dg_globals.matIAB=cell(2,2);
 dg_globals.matIAC=cell(2,2);
+dg_globals.matIAB=cell(2,1);
 
 dg_globals.matIAB{1,1}=dg_globals.capH_double./(1+dg_globals.capH_double);
 dg_globals.matIAB{1,2}=1./(1+dg_globals.capH_double);
@@ -82,6 +82,10 @@ dg_globals.matIAC{1,2}(end)=matIAC_12_inf(end);
 
 dg_globals.matIAC{2,1}= dg_globals.capH_double.*dg_globals.matIAC{1,1};
 dg_globals.matIAC{2,2}= dg_globals.capH_double.*dg_globals.matIAC{1,2};
+
+dg_globals.matIAD{1,1}=dg_globals.potential_eff_general_s;
+dg_globals.matIAD{2,1}=dg_globals.capH_double.*dg_globals.potential_eff_general_s;
+
 
 
 %%%%%%%%%%% Initial Conditions, set in the yml file
@@ -112,26 +116,17 @@ dg_globals.matF=1;
 dg_globals.xmin=min(min(diff(x(:,:))));
 
 dg_globals.dt=0.01046059193835873271649639093539;
-dg_globals.dt=round(dg_globals.dt*100)/100; %% round it off to two decimal places
-%dg_globals.dt = dg_globals.CFL*dg_globals.xmin/5;
-dg_globals.dt=dg_globals.dt/(0.5*dg_globals.m_mode); %%% scaling for m mode
 
+dg_globals.dt = dg_globals.CFL*dg_globals.xmin;
+dg_globals.dt=round(dg_globals.dt*100)/100; %% round it off to two decimal places
+if dg_globals.m_mode~=0
+    dg_globals.dt=dg_globals.dt/(0.5*dg_globals.m_mode); %%% scaling for m mode
+end
 next_snapshot = dg_globals.DT;
 
 
 
 output = SchwarzschildIntegrator(dg_globals);
 
-
-%%%%%%%%%%% post processing
-tarr=cell2mat(tarr);
-
-test=reshape(output.psi_arr(100,:,:),1,[]);
-test=reshape(test,20,200);
-
-psiarr=psiarr(~cellfun(@isempty, psiarr));
-
-piarr=piarr(~cellfun(@isempty, piarr));
-phiarr=phiarr(~cellfun(@isempty, phiarr));
 
 
