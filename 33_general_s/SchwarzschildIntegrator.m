@@ -1,4 +1,4 @@
-function [output] = SchwarzschildIntegrator(dg_globals) 
+% function [output] = SchwarzschildIntegrator(dg_globals) 
 
 x=dg_globals.x;
 Np=dg_globals.Np;
@@ -71,7 +71,7 @@ for tstep=1:Nsteps
    
   
    % if mod(time,dg_globals.DT)<=dg_globals.dt/2 && tstep~=1
-   if (mod(time,dg_globals.DT) == 0 && time >= 0)
+   if (mod(time,dg_globals.DT) <= dg_globals.dt && time ~= 0)
        output.psi_arr(counter_snap,:,:)=Psi(:,:);
        output.pi_arr(counter_snap,:,:)=Pi(:,:);
        output.phi_arr(counter_snap,:,:)=Phi(:,:);
@@ -94,4 +94,4 @@ for tstep=1:Nsteps
 
 end
 disp('Process completed succesfully')
-return
+% return

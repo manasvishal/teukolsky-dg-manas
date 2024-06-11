@@ -8,14 +8,25 @@ function [struct_hyperboloidal] = HyperboloidalLayers(struct_hyperboloidal,symme
 
 digits(num_digits)
 struct_hyperboloidal.locR_symbolic= vpa(struct_hyperboloidal.locR);
-struct_hyperboloidal.s_symbolic = vpa(struct_hyperboloidal.s); 
+struct_hyperboloidal.s_symbolic = vpa(struct_hyperboloidal.xR); 
 struct_hyperboloidal.P_symbolic = vpa(struct_hyperboloidal.P);
 struct_hyperboloidal.x_symbolic = vpa(struct_hyperboloidal.rho);
 
 C=struct_hyperboloidal.hyperboloidal_switch;
 
+if C==0
+ %%% no hyperboloidal layers
+    struct_hyperboloidal.capH_double=0.*struct_hyperboloidal.rho;
+    % struct_hyperboloidal.capHPrime_double=double(struct_hyperboloidal.capHPrime_symbolic);
+    struct_hyperboloidal.omega_double=ones(size(struct_hyperboloidal.rho));
+    struct_hyperboloidal.omegaPrime_double = 0.*struct_hyperboloidal.rho;
+    % struct_hyperboloidal.omegaPrime_double=double(struct_hyperboloidal.omegaPrime_symbolic);
+    % struct_hyperboloidal.ohm_double=double(struct_hyperboloidal.ohm_symbolic);
+    % struct_hyperboloidal.ohmPrime_double=double(struct_hyperboloidal.ohmPrime_symbolic);
+    struct_hyperboloidal.rstarCoord_double=struct_hyperboloidal.rho;
 
-
+else 
+    %%% hyperboloidal layers
     if symmetric_layers==1
     
     
@@ -210,8 +221,7 @@ C=struct_hyperboloidal.hyperboloidal_switch;
         
     end
 
-
-
-
+%%% end for switch C
+end
 
 end

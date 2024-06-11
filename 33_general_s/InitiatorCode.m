@@ -7,7 +7,8 @@ addpath(genpath("../00_essential_codes/"));
 dg_globals = ReadYaml("input.yml");
 
 
-if dg_globals.primary_spin == 0    
+if dg_globals.primary_spin == 0
+    % dbstop in SchwarzschildRHS at 199 if max(max(rhsPsi))>1e5; 
     SchwarzschildDriver
 else
 

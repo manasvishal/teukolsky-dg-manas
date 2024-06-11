@@ -40,21 +40,7 @@ dg_globals=HyperboloidalLayers(dg_globals,symmetric_layers,digits_VPA);
 
 
 
-
-
-
-
-dg_globals.potential_eff_general_s = -(1./(1-dg_globals.capH_double.^2)).*(1-2*dg_globals.M.*(1+dg_globals.spin_field)./dg_globals.r_sch).*(2*dg_globals.M./(dg_globals.r_sch.^3) ...
-                    + (dg_globals.ell_mode_max-dg_globals.spin_field)*(dg_globals.ell_mode_max+dg_globals.spin_field+1)./dg_globals.r_sch.^2);
-
-dg_globals.pot_inf=((dg_globals.omega_double-dg_globals.x.*dg_globals.omegaPrime_double)./(1+dg_globals.capH_double))...
-        .*((dg_globals.x-2*dg_globals.M*dg_globals.omega_double)./dg_globals.x)...
-        .*((2*dg_globals.M.*(1+dg_globals.spin_field).*dg_globals.omega_double)./dg_globals.x.^3 ...
-        + (dg_globals.ell_mode_max-dg_globals.spin_field).*(dg_globals.ell_mode_max+dg_globals.spin_field+1)./dg_globals.x.^2);
-
-dg_globals.potential_eff_general_s(Np,K)=double(dg_globals.pot_inf(Np,K));
-
-dg_globals.potential=dg_globals.potential_eff_general_s;
+dg_globals=general_potential(dg_globals);
 
 
 
@@ -68,17 +54,10 @@ dg_globals.matIAB{1,2}=1./(1+dg_globals.capH_double);
 dg_globals.matIAB{2,1}=1./(1+dg_globals.capH_double);
 dg_globals.matIAB{2,2}=dg_globals.capH_double./(1+dg_globals.capH_double);
 
-dg_globals.matIAC{1,1}= (2.*dg_globals.spin_field./(1-dg_globals.capH_double.^2)).*(dg_globals.r_sch-3.*dg_globals.M)./dg_globals.r_sch.^3;
+dg_globals.matIAC{1,1} = (2.*dg_globals.spin_field./(1-dg_globals.capH_double.^2)).*((dg_globals.r_sch-3.*dg_globals.M)./dg_globals.r_sch.^2);
 
-matIAC_11_inf=(2.*dg_globals.spin_field.*(dg_globals.omega_double-dg_globals.x.*dg_globals.omegaPrime_double)./(1+dg_globals.capH_double))...
-        .*((dg_globals.rho-3.*dg_globals.M.*dg_globals.omega_double)./dg_globals.x.^2);
-dg_globals.matIAC{1,1}(end)=matIAC_11_inf(end);
 
-dg_globals.matIAC{1,2}= -(dg_globals.spin_field./(1-dg_globals.capH_double.^2)).*(2.*dg_globals.r_sch-2*dg_globals.M)./dg_globals.r_sch.^2;
-
-matIAC_12_inf=(dg_globals.spin_field.*(dg_globals.omega_double-dg_globals.x.*dg_globals.omegaPrime_double)./(1+dg_globals.capH_double))...
-        .*((2.*dg_globals.rho-2.*dg_globals.M)./dg_globals.x.^2);
-dg_globals.matIAC{1,2}(end)=matIAC_12_inf(end);
+dg_globals.matIAC{1,2}= (dg_globals.spin_field./(1-dg_globals.capH_double.^2)).*(2.*dg_globals.r_sch-2*dg_globals.M)./dg_globals.r_sch.^2;
 
 dg_globals.matIAC{2,1}= dg_globals.capH_double.*dg_globals.matIAC{1,1};
 dg_globals.matIAC{2,2}= dg_globals.capH_double.*dg_globals.matIAC{1,2};
@@ -86,6 +65,16 @@ dg_globals.matIAC{2,2}= dg_globals.capH_double.*dg_globals.matIAC{1,2};
 dg_globals.matIAD{1,1}=dg_globals.potential_eff_general_s;
 dg_globals.matIAD{2,1}=dg_globals.capH_double.*dg_globals.potential_eff_general_s;
 
+
+if dg_globals.hyperboloidal_switch==1
+    matIAC_11_inf=(2.*dg_globals.spin_field.*(dg_globals.omega_double-dg_globals.x.*dg_globals.omegaPrime_double)./(1+dg_globals.capH_double))...
+            .*((dg_globals.rho-3.*dg_globals.M.*dg_globals.omega_double)./dg_globals.x.^2);
+    dg_globals.matIAC{1,1}(end)=matIAC_11_inf(end);
+
+    matIAC_12_inf=-(dg_globals.spin_field.*(dg_globals.omega_double-dg_globals.x.*dg_globals.omegaPrime_double)./(1+dg_globals.capH_double))...
+        .*((2.*dg_globals.rho-2.*dg_globals.M)./dg_globals.x.^2);
+    dg_globals.matIAC{1,2}(end)=matIAC_12_inf(end);
+end
 
 
 %%%%%%%%%%% Initial Conditions, set in the yml file
@@ -115,18 +104,19 @@ dg_globals.matF=1;
 
 dg_globals.xmin=min(min(diff(x(:,:))));
 
-dg_globals.dt=0.01046059193835873271649639093539;
+% dg_globals.dt=0.01046059193835873271649639093539;
 
 dg_globals.dt = dg_globals.CFL*dg_globals.xmin;
-dg_globals.dt=round(dg_globals.dt*100)/100; %% round it off to two decimal places
+% dg_globals.dt = 0.02;
+% dg_globals.dt=round(dg_globals.dt*100)/100; %% round it off to two decimal places
 if dg_globals.m_mode~=0
     dg_globals.dt=dg_globals.dt/(0.5*dg_globals.m_mode); %%% scaling for m mode
 end
 next_snapshot = dg_globals.DT;
 
 
-
-output = SchwarzschildIntegrator(dg_globals);
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+SchwarzschildIntegrator;
 
 
 

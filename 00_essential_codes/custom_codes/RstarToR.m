@@ -20,10 +20,10 @@ function [Rsch,Rschm2m] = RstarToR(x,m)
       
       for k = 1:LENGTHx  %finds rsch at each point
         rstar = x(k);
-                if rstar < -1.0e3   %less than -1000, very close to horizon (when m=1)
-                      error = 'Tortoise coordinate too small'
-                      pause
-                end
+                % if rstar < -1.0e3   %less than -1000, very close to horizon (when m=1)
+                %       error = 'Tortoise coordinate too small'
+                %       pause
+                % end
 
                 if rstar > 4.0*m   %not near horizon
                   rsch    = rstar;

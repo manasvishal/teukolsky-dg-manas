@@ -1,6 +1,8 @@
+close all;
 logt=log10(output.time_arr);
 psi_extr=zeros(size(output.time_arr));
-r=dg_globals.Np; c=dg_globals.K;
+[r,c]=find_value_arr(dg_globals.r_sch,100)
+% r=dg_globals.Np; c=dg_globals.K;
 for i=1:length(output.time_arr)
    psi_t=flatten_array(output.psi_arr(i,:,:),dg_globals);
   
@@ -11,9 +13,9 @@ for i=1:length(output.time_arr)
 end
 
 log_psi=log10(psi_extr);
-plot(logt,log10(psi_extr)); 
-xlim([2,4])
-
+plot(logt,log10(psi_extr),"-"); 
+xlim([2,3.3])
+ylim([-10,5])
 
 % cut1=find(abs(logt-3)<1e-3);
 % cut1=cut1(end);
@@ -22,7 +24,7 @@ xlim([2,4])
 % % subplot(2,1,1)
 % 
 % plot(logt(4:end),log10(abs((psi_extr0(4:end)))),"r-",'LineWidth',1.5);
-% dLog0=ComputeTailDecayRate(output.tarr,psi_extr0);
+dLog=ComputeTailDecayRate(output.time_arr,psi_extr);
 % % plot(logt(cut1:cut2),dLog0(cut1:cut2),'r','LineWidth',1.5)
 % data_fit_x=output.tarr(cut1:end-1)'; data_fit_y=dLog0(cut1:end)';
 % P0=fit(data_fit_x(:),data_fit_y(:),"c+b*x^(-m)");
@@ -63,16 +65,17 @@ xlim([2,4])
 % 
 % 
 % 
-% % create smaller axes in top right, and plot on it
+% create smaller axes in top right, and plot on it
 % axes('Position',[.26 .2 .47 .2])
 % box on
 % grid()
-% cut1_inplot=find(abs(logt-2.5)<1e-3);
+% cut1_inplot=find(abs(logt-2.6)<1e-3);
 % cut1_inplot=cut1_inplot(1);
-% cut2_inplot=find(abs(logt-3.99)<1e-3);
+% cut2_inplot=find(abs(logt-2.99)<1e-3);
 % cut2_inplot=cut2_inplot(end);
-% 
-% plot(logt(cut1_inplot:cut2_inplot),dLog0(cut1_inplot:cut2_inplot),"r-",'LineWidth',1.5);
+% plot(logt(cut1_inplot:cut2_inplot),dLog(cut1_inplot:cut2_inplot),"r-",'LineWidth',1.5);
+
+
 % yline(-3,"--")
 % hold on
 % plot(logt(cut1_inplot:cut2_inplot),dLog1(cut1_inplot:cut2_inplot),"k--",'LineWidth',1.5);

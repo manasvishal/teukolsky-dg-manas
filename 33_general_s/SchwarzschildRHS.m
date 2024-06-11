@@ -1,4 +1,4 @@
-function [rhsPsi,rhsPi, rhsPhi] = SchwarzschildRHS(Psi,Pi,Phi,dg_globals,time)
+function [rhsPsi,rhsPi, rhsPhi] = SchwarzschildRHS_old(Psi,Pi,Phi,dg_globals,time)
 
 
 
@@ -20,7 +20,7 @@ Fscale=dg_globals.Fscale;
 % omega=dg_globals.omega_double;
 % ohm=dg_globals.ohm_double;
 capH=dg_globals.capH_double;
-capHP=dg_globals.capHPrime_double;
+% capHP=dg_globals.capHPrime_double;
 % potential_eff=dg_globals.potential_eff;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Define field differences at faces
@@ -29,16 +29,23 @@ dPhi = zeros(Nfp*Nfaces,K); dPhi(:) = Phi(vmapM)-Phi(vmapP);
 
 
 % %%Left boundary conditions
-PiL= (Pi(1,1) -Phi(1,1))/2; dPi (1,1) = Pi(1,1) - PiL; 
-PhiL =  (-Pi(1,1) +Phi(1,1))/2; dPhi (1,1) = Phi(1,1) - PhiL;
+PiL= (Pi(1,1) -Phi(1,1))/2; 
+dPi(1,1) = Pi(1,1) - PiL; 
+
+PhiL =  (-Pi(1,1) +Phi(1,1))/2; 
+dPhi(1,1) = Phi(1,1) - PhiL;
 
 
-%%%Right boundary conditions
-%PiR= (Pi(end,end) + Phi(end,end))/2; 
-%dPi (end,end) = Pi(end,end) - PiR; 
+if dg_globals.hyperboloidal_switch==0
 
-%PhiR =  (Pi(end,end) +Phi(end,end))/2; 
-%dPhi (end,end) = Phi(end,end) - PhiR;
+    %%%Right boundary conditions
+    PiR= (Pi(end,end) + Phi(end,end))/2; 
+    dPi(end,end) = Pi(end,end) - PiR; 
+    
+    PhiR =  (Pi(end,end) +Phi(end,end))/2; 
+    dPhi(end,end) = Phi(end,end) - PhiR;
+end    
+
 
 %%%%%% evaluate upwind fluxes
 % fluxPi = 0.5.*(nx.*dPhi - dPi);
@@ -57,11 +64,11 @@ elseif(dg_globals.first_order_reduction_type==2)
     fluxPi=  dg_globals.matIAB{1,1}.*Pi...
             +dg_globals.matIAB{1,2}.*Phi;
     % fluxPhi= Pi;
-    % fluxPhi= dg_globals.matIAB{2,1}.*Pi...
-    %         +dg_globals.matIAB{2,2}.*Phi;
-    % 
-    % fluxPi_old = -1./(1+capH).*( - Phi - capH.*(Pi) ) ;
-    % fluxPhi_old =-1./(1+capH).*( -Pi - capH.*Phi);
+    fluxPhi= dg_globals.matIAB{2,1}.*Pi...
+            +dg_globals.matIAB{2,2}.*Phi;
+    
+    fluxPi_old = -1./(1+capH).*( - Phi - capH.*(Pi) ) ;
+    fluxPhi_old =-1./(1+capH).*( -Pi - capH.*Phi);
 else
     disp("ERROR! system type not found")
 end
@@ -70,13 +77,11 @@ fluxPiM = fluxPi(vmapM);
 fluxPiP = fluxPi(vmapP);
 
 
-fluxPhiM = Pi(vmapM);
-fluxPhiP = Pi(vmapP);
+fluxPhiM = fluxPhi(vmapM);
+fluxPhiP = fluxPhi(vmapP);
 
-fluxPhiP(1,1) = PiL;
-
-% fluxPiP(end,end) = fluxPiM(end,end); 
-% fluxPhiP(end,end) = fluxPhiM(end,end); 
+fluxPiP(end,end) = fluxPiM(end,end); 
+fluxPhiP(end,end) = fluxPhiM(end,end); 
 
 %% central numerical flux
 fluxPitrue =(fluxPiP  + fluxPiM)/2;
@@ -188,12 +193,15 @@ elseif(dg_globals.first_order_reduction_type==2)
             -  dg_globals.matIAD{2,1}.*Psi ;
 
 
-    rhsPi_old = 1./(1+capH).*( - rx.*(Dr*Phi) - capH.*rx.*(Dr*Pi)) + LIFT*(Fscale.*fluxPi)...
-        - 0.*Psi ;
-    rhsPhi_old =1./(1+capH).*( - rx.*(Dr*Pi) - capH.*rx.*(Dr*Phi)) + LIFT*(Fscale.*fluxPhi) ...
-        -  capH.*0.*Psi ;
+    % rhsPi_old = 1./(1+capH).*( - rx.*(Dr*Phi) - capH.*rx.*(Dr*Pi)) + LIFT*(Fscale.*fluxPi)...
+    %     - 0.*Psi ;
+    % rhsPhi_old =1./(1+capH).*( - rx.*(Dr*Pi) - capH.*rx.*(Dr*Phi)) + LIFT*(Fscale.*fluxPhi) ...
+    %     -  capH.*0.*Psi ;
 end
 
+constraint=dg_globals.rx.*(dg_globals.Dr*(Psi)) - Phi;
+% assert(max(max(abs(constraint)))<1e-5);
+% assert(max(max(Psi))<1e10,"The solution is growing. Please debug at local time: " +num2str(time));
 
 return
 
