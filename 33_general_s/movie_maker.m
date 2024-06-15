@@ -4,9 +4,9 @@ close all;
 set(gcf, 'Position', [360 360 720 720]);
 set(gcf,'DefaultLineLineWidth',2)
 %psiarr_unity=load("psiarr_unity.mat");
-% v=VideoWriter("./Animation.mp4",'MPEG-4');
-% v.FrameRate=24;
-% open(v);
+v=VideoWriter("./Animation.mp4",'MPEG-4');
+v.FrameRate=24;
+open(v);
 x0=-dg_globals.mu;
 f0=2;
 c=1;
@@ -17,7 +17,12 @@ while frm<=length(output.time_arr)
         
         subplot(2,1,1)
         plot(x, psi_num ); 
+        hold on
+        % ylim([-1,1])
+        % xlim([0,1200])
+        % plot(x,dg_globals.potential_eff_general_s,"r-",LineWidth=0.5)
         title("Psi")
+        hold off
 
         % subplot(5,1,2)
         % plot(x, real(flatten_array(output.pi_arr(frm,:,:),dg_globals)) ); 
@@ -32,8 +37,10 @@ while frm<=length(output.time_arr)
         % title("Numerical solution")
 
         subplot(2,1,2)
-        plot(x, dg_globals.rx.*(dg_globals.Dr*flatten_array(real(output.psi_arr(frm,:,:)),dg_globals)) ...
-                -real(flatten_array(output.phi_arr(frm,:,:),dg_globals)) ); 
+        constraint= dg_globals.rx.*(dg_globals.Dr*flatten_array(real(output.psi_arr(frm,:,:)),dg_globals)) ...
+                -real(flatten_array(output.phi_arr(frm,:,:),dg_globals));
+        semilogy(x, abs(constraint) ); 
+        ylim([1e-16,1])
         title("Constraint")
 
         % subplot(4,1,4)
@@ -53,11 +60,11 @@ while frm<=length(output.time_arr)
         hold on
         frame = getframe(gcf);
         size(frame.cdata);
-%         writeVideo(v,frame);
+        writeVideo(v,frame);
         drawnow
         % pause(1)
         hold off
-        frm=frm+50;
+        frm=frm+20;
 end
-% close(v)
+close(v)
 close all

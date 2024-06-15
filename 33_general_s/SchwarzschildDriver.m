@@ -54,16 +54,18 @@ dg_globals.matIAB{1,2}=1./(1+dg_globals.capH_double);
 dg_globals.matIAB{2,1}=1./(1+dg_globals.capH_double);
 dg_globals.matIAB{2,2}=dg_globals.capH_double./(1+dg_globals.capH_double);
 
-dg_globals.matIAC{1,1} = (2.*dg_globals.spin_field./(1-dg_globals.capH_double.^2)).*((dg_globals.r_sch-3.*dg_globals.M)./dg_globals.r_sch.^2);
 
+dg_globals.prefactorA = -2.*dg_globals.spin_field.*((dg_globals.r_sch-3.*dg_globals.M)./dg_globals.r_sch.^2);
+dg_globals.prefactorB = -2.*dg_globals.spin_field.*(dg_globals.r_sch-dg_globals.M)./dg_globals.r_sch.^2;
 
-dg_globals.matIAC{1,2}= (dg_globals.spin_field./(1-dg_globals.capH_double.^2)).*(2.*dg_globals.r_sch-2*dg_globals.M)./dg_globals.r_sch.^2;
+dg_globals.matIAC{1,1} = (1./(1-dg_globals.capH_double.^2)).*(-1*dg_globals.prefactorA);
+dg_globals.matIAC{1,2}= (1./(1-dg_globals.capH_double.^2)).*(dg_globals.prefactorB);
 
 dg_globals.matIAC{2,1}= dg_globals.capH_double.*dg_globals.matIAC{1,1};
 dg_globals.matIAC{2,2}= dg_globals.capH_double.*dg_globals.matIAC{1,2};
 
-dg_globals.matIAD{1,1}=dg_globals.potential_eff_general_s;
-dg_globals.matIAD{2,1}=dg_globals.capH_double.*dg_globals.potential_eff_general_s;
+dg_globals.matIAD{1,1}=(1./(1-dg_globals.capH_double.^2)).*dg_globals.potential_eff_general_s;
+dg_globals.matIAD{2,1}=dg_globals.capH_double.*(1./(1-dg_globals.capH_double.^2)).*dg_globals.potential_eff_general_s;
 
 
 if dg_globals.hyperboloidal_switch==1

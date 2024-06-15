@@ -14,8 +14,8 @@ end
 
 log_psi=log10(psi_extr);
 plot(logt,log10(psi_extr),"-"); 
-xlim([2,3.3])
-ylim([-10,5])
+% xlim([1.4,3.3])
+ylim([-15, 2 ])
 
 % cut1=find(abs(logt-3)<1e-3);
 % cut1=cut1(end);
@@ -66,14 +66,14 @@ dLog=ComputeTailDecayRate(output.time_arr,psi_extr);
 % 
 % 
 % create smaller axes in top right, and plot on it
-% axes('Position',[.26 .2 .47 .2])
-% box on
-% grid()
-% cut1_inplot=find(abs(logt-2.6)<1e-3);
-% cut1_inplot=cut1_inplot(1);
-% cut2_inplot=find(abs(logt-2.99)<1e-3);
-% cut2_inplot=cut2_inplot(end);
-% plot(logt(cut1_inplot:cut2_inplot),dLog(cut1_inplot:cut2_inplot),"r-",'LineWidth',1.5);
+axes('Position',[.26 .2 .47 .2])
+box on
+grid()
+cut1_inplot=find(abs(logt-2.86)<1e-3);
+cut1_inplot=cut1_inplot(1);
+cut2_inplot=find(abs(logt-2.97)<1e-3);
+cut2_inplot=cut2_inplot(end);
+plot(logt(cut1_inplot:cut2_inplot),dLog(cut1_inplot:cut2_inplot),"r-",'LineWidth',1.5);
 
 
 % yline(-3,"--")
