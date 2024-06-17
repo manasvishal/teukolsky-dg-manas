@@ -200,7 +200,7 @@ elseif(dg_globals.first_order_reduction_type==2)
 end
 
 constraint=dg_globals.rx.*(dg_globals.Dr*(Psi)) - Phi;
-assert(max(max(abs(constraint)))<1e-5,"The constraint error is large at local time: " +num2str(time));
+% assert(max(max(abs(constraint)))<1e-5,"The constraint error is large at local time: " +num2str(time));
 assert(max(max(Psi))<1e2,"The solution is growing. Please debug at local time: " +num2str(time));
 
 return

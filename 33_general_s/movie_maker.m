@@ -19,7 +19,7 @@ while frm<=length(output.time_arr)
         plot(x, psi_num ); 
         hold on
         % ylim([-1,1])
-        % xlim([0,1200])
+        xlim([dg_globals.xL,100])
         % plot(x,dg_globals.potential_eff_general_s,"r-",LineWidth=0.5)
         title("Psi")
         hold off

@@ -6,11 +6,11 @@
 
 # Initial Conditions
 IC_type: non-zero-momentum-gaussian
-sigma: 3
-mu: 100
+sigma: 10
+mu: 30
 
 # background field
-spin_field: -2
+spin_field: 0
 
 # Primary BH params
 primary_mass: 1
@@ -25,11 +25,11 @@ rp: 16     # radius if a circular orbit
 mass_particle: 0.0
 
 # DG Grid params
-N:  28
-K: 800
-xL: -1200
+N:  8
+K: 100
+xL: -200
 xR: 1200
-locR: 100
+locR: 1100
 hyperboloidal_switch: 0; # 0 turns off the layers; 1 turns it on
 symmetric_layers: 0  # 1 for symmetric layers around R; 0 for not symmetric
 digits_VPA: 1
@@ -37,7 +37,7 @@ P: 4  # Polynomial degree for hyperboloidal layers
 
 
 # Simulation params
-DT: 1 # Snapshot time interval
-CFL: 0.8
+DT: 0.1 # Snapshot time interval
+CFL: 0.4
 
 FinalTime: 1000

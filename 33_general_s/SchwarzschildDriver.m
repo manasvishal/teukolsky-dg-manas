@@ -108,8 +108,8 @@ dg_globals.xmin=min(min(diff(x(:,:))));
 
 % dg_globals.dt=0.01046059193835873271649639093539;
 
-dg_globals.dt = dg_globals.CFL*dg_globals.xmin;
-% dg_globals.dt = 0.02;
+% dg_globals.dt = dg_globals.CFL*dg_globals.xmin;
+dg_globals.dt = 1e-3;
 % dg_globals.dt=round(dg_globals.dt*100)/100; %% round it off to two decimal places
 if dg_globals.m_mode~=0
     dg_globals.dt=dg_globals.dt/(0.5*dg_globals.m_mode); %%% scaling for m mode
